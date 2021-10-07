@@ -63,7 +63,10 @@ func tryTelegramNotification() {
 // tryRestartLnBitsCommand will try to restart LNBits using the provided command
 func tryRestartLnBitsCommand() {
 	if len(RestartLnBitsCommand) > 0 {
-		exec.Command(RestartLnBitsCommand)
+		err := exec.Command("/bin/sh", "-c", RestartLnBitsCommand).Run()
+		if err != nil {
+			log.Errorln(err)
+		}
 	}
 }
 
