@@ -14,6 +14,8 @@ import (
 const (
 	// TelegramBotApiKey optional telegram bot api key. If you provide Telegram bot API key, you'll get notifications
 	TelegramBotApiKey = ""
+	// TelegramMessage optional telegram bot that all TelegramUsers will receive
+	TelegramMessage = ""
 	// LNBitsHost required url to your LNBits
 	LNBitsHost = "https://lnbits.com"
 	// LNBitsWalletXApiKey required LNBits X-API-Key (from any wallet you want to check)
@@ -67,7 +69,7 @@ func startWalletMonitoring() {
 func tryTelegramNotification() {
 	if len(TelegramBotApiKey) > 0 && len(TelegramUsers) > 0 {
 		for _, user := range TelegramUsers {
-			r := strings.NewReader(fmt.Sprintf(`{"chat_id": "%s", "text": "LNBits API request timeout! Trying to restart", "disable_notification": false}`, user))
+			r := strings.NewReader(fmt.Sprintf(`{"chat_id": "%s", "text": "%s", "disable_notification": false}`, user, TelegramMessage))
 			http.Post(fmt.Sprintf("https://api.telegram.org/%s/sendMessage", TelegramBotApiKey),
 				"application/json", r)
 		}
@@ -104,9 +106,13 @@ func checkConfiguration() {
 	if len(TelegramBotApiKey) > 0 && len(TelegramUsers) == 0 {
 		panic(fmt.Errorf("please provide the telegram users id's you want to notify (TelegramUsers)"))
 	}
+	if len(TelegramBotApiKey) > 0 && len(TelegramUsers) > 0 && TelegramMessage == "" {
+		panic(fmt.Errorf("please provide a valid TelegramMessage"))
+	}
 	if (len(TelegramBotApiKey) == 0 || len(TelegramUsers) == 0) && len(RestartLnBitsCommand) == 0 {
 		panic(fmt.Errorf("please provide either a telegram API key (LnBitsHost) and user id's (TelegramUsers) or a valid RestartLnBitsCommand. Otherwise this application is useless"))
 	}
+
 }
 
 // setLogger will initialize the log format
