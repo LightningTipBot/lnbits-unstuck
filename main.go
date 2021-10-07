@@ -44,7 +44,6 @@ func checkOnlineStatus() error {
 	if err, ok := err.(net.Error); ok && err.Timeout() {
 		return err
 	}
-	log.Info("LNBits is up.")
 	return nil
 
 }
